@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Empire Design — Agence Digitale | Sangmélima</title>
+<meta name="description" content="Empire Design — Agence digitale à Sangmélima, Cameroun. Développement web, applications mobiles, identité visuelle, design print et marketing digital."/>
+<meta name="keywords" content="Empire Design, agence digitale, Sangmélima, Cameroun, site web, application mobile, logo, design"/>
+<meta name="author" content="Empire Design"/>
+
+<!-- Open Graph (WhatsApp, Facebook preview) -->
+<meta property="og:title" content="Empire Design — Agence Digitale"/>
+<meta property="og:description" content="Votre partenaire digital à Sangmélima. Sites web, apps mobiles, identité visuelle et plus."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://empire-design.github.io"/>
+<meta property="og:image" content="https://empire-design.github.io/preview.png"/>
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Empire Design — Agence Digitale"/>
+<meta name="twitter:description" content="Votre partenaire digital à Sangmélima, Cameroun."/>
+
+<!-- Favicon inline SVG -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%23D4A017'/><text x='50' y='72' font-size='60' text-anchor='middle' font-family='Arial Black' fill='%23080800'>E</text></svg>"/>
+
+<!-- Redirection vers la vitrine principale -->
+<script>
+  // Si vous placez la vitrine dans un fichier séparé (ex: vitrine.html),
+  // décommentez la ligne suivante pour rediriger automatiquement :
+  // window.location.href = 'vitrine.html';
+</script>
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #080800;
+    color: #FFFFFF;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  .wrap { position: relative; z-index: 1; text-align: center; padding: 2rem; }
+  .logo-box {
+    width: 80px; height: 80px; border-radius: 18px;
+    background: linear-gradient(135deg, #D4A017, #F5C842, #B8860B);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px; font-weight: 900; color: #080800;
+    margin: 0 auto 1.5rem;
+    animation: pop .6s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  h1 {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 800; letter-spacing: -1px;
+    background: linear-gradient(135deg, #D4A017, #F5C842, #B8860B);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    margin-bottom: .5rem;
+    animation: fadeUp .6s .1s ease both;
+  }
+  .sub {
+    font-size: 16px; color: #A09870; margin-bottom: .5rem;
+    animation: fadeUp .6s .2s ease both;
+  }
+  .loc {
+    font-size: 13px; color: #64645a; margin-bottom: 2.5rem;
+    animation: fadeUp .6s .3s ease both;
+  }
+  .cta-wrap {
+    display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+    animation: fadeUp .6s .4s ease both;
+  }
+  .btn-gold {
+    padding: 13px 28px; border-radius: 10px; border: none;
+    background: linear-gradient(135deg, #D4A017, #F5C842, #B8860B);
+    color: #080800; font-size: 15px; font-weight: 700; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: all .2s; font-family: inherit;
+  }
+  .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(212,160,23,.35); }
+  .btn-ghost {
+    padding: 13px 28px; border-radius: 10px;
+    border: 1.5px solid rgba(255,255,255,.2);
+    background: transparent; color: #FFFFFF; font-size: 15px;
+    font-weight: 700; cursor: pointer; transition: all .2s; font-family: inherit;
+  }
+  .btn-ghost:hover { border-color: rgba(212,160,23,.6); background: rgba(212,160,23,.08); transform: translateY(-2px); }
+  .status {
+    margin-top: 3rem; display: flex; gap: 8px; justify-content: center;
+    align-items: center; font-size: 13px; color: #A09870;
+    animation: fadeUp .6s .5s ease both;
+  }
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: #10B981;
+    animation: blink 2s infinite;
+  }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px) } to { opacity:1; transform:none } }
+  @keyframes pop { from { opacity:0; transform:scale(.5) } to { opacity:1; transform:scale(1) } }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+
+<div class="wrap">
+  <div class="logo-box">E</div>
+  <h1>Empire Design</h1>
+  <p class="sub">Agence Digitale &amp; Créative</p>
+  <p class="loc">📍 Sangmélima, Cameroun</p>
+
+  <div class="cta-wrap">
+    <button class="btn-gold" onclick="goSite()">🚀 Voir notre vitrine</button>
+    <button class="btn-ghost" onclick="wa()">💬 Nous contacter</button>
+  </div>
+
+  <div class="status">
+    <div class="status-dot"></div>
+    En ligne · +237 694 786 774
+  </div>
+</div>
+
+<script>
+// Particules de fond
+(function(){
+  var c=document.getElementById('c'),ctx=c.getContext('2d'),W,H,pts=[];
+  function resize(){ W=c.width=innerWidth; H=c.height=innerHeight; }
+  resize(); window.addEventListener('resize',resize);
+  for(var i=0;i<60;i++) pts.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.3+.3,a:Math.random()*.4+.08});
+  (function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(function(p,i){
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(212,160,23,'+p.a+')'; ctx.fill();
+      for(var j=i+1;j<pts.length;j++){
+        var q=pts[j],dx=p.x-q.x,dy=p.y-q.y,d=Math.sqrt(dx*dx+dy*dy);
+        if(d<100){ ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.strokeStyle='rgba(212,160,23,'+(0.08*(1-d/100))+')'; ctx.lineWidth=.5; ctx.stroke(); }
+      }
+    });
+    requestAnimationFrame(draw);
+  })();
+})();
+
+// Liens
+function goSite(){
+  // Redirige vers votre vitrine principale
+  // Si votre vitrine s'appelle "vitrine.html", changez l'URL ci-dessous
+  window.location.href = 'vitrine.html';
+}
+function wa(){
+  window.open('https://wa.me/237694786774?text='+encodeURIComponent("Bonjour Empire Design ! Je suis intéressé par vos services, puis-je en savoir plus ?"),'_blank');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Empire Design — Agence Digitale</title>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<script>
+// ============================================================
+// EMPIRE DESIGN — 100% JAVASCRIPT PUR
+// Sangmélima, Cameroun | WhatsApp: +237 694 786 774
+// ============================================================
+
+var WA = '237694786774';
+function wa(msg){ window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(msg||'Bonjour Empire Design ! Je suis intéressé par vos services, puis-je en savoir plus ?'),'_blank'); }
+
+function el(tag,props,children){
+  var e=document.createElement(tag);
+  if(props) Object.keys(props).forEach(function(k){
+    if(k==='style'&&typeof props[k]==='object') Object.assign(e.style,props[k]);
+    else if(k==='html') e.innerHTML=props[k];
+    else if(k.startsWith('on')) e.addEventListener(k.slice(2),props[k]);
+    else e.setAttribute(k,props[k]);
+  });
+  if(children) [].concat(children).forEach(function(c){ if(c!=null) e.appendChild(typeof c==='string'?document.createTextNode(c):c); });
+  return e;
+}
+function css(r){ var s=document.createElement('style'); s.textContent=r; document.head.appendChild(s); }
+
+var T={
+  black:'#080800', dark:'#0f0f00', dark2:'#1a1a00', dark3:'#222210',
+  gold:'#D4A017', gold2:'#F5C842', gold3:'#B8860B',
+  white:'#FFFFFF', white2:'#E8E8D0', white3:'#A09870',
+  green:'#10B981', red:'#EF4444', wa:'#25D366',
+  grad:'linear-gradient(135deg,#D4A017,#F5C842,#B8860B)',
+  r:'10px', r2:'16px'
+};
+
+css(`
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;800;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;background:${T.black};color:${T.white};overflow-x:hidden;line-height:1.6;cursor:none}
+a{text-decoration:none;color:inherit}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:${T.dark}}
+::-webkit-scrollbar-thumb{background:${T.gold};border-radius:3px}
+#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.site{position:relative;z-index:2}
+.dot{width:10px;height:10px;background:${T.gold};border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
+.ring{width:34px;height:34px;border:1.5px solid rgba(212,160,23,.5);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all .12s ease}
+section{padding:100px 5%}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .6s ease,transform .6s ease}
+.reveal.vis{opacity:1;transform:none}
+.r1{transition-delay:.1s}.r2{transition-delay:.2s}.r3{transition-delay:.3s}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes waRing{0%{transform:scale(.9);opacity:1}100%{transform:scale(1.4);opacity:0}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@media(max-width:768px){
+  .nav-links{display:none!important}
+  .ham{display:flex!important}
+  .mob.open{display:block!important}
+  .contact-grid,.footer-grid{grid-template-columns:1fr!important}
+  .form-row{grid-template-columns:1fr!important}
+  section{padding:70px 5%}
+}
+@media(max-width:500px){
+  .srv-grid,.price-grid{grid-template-columns:1fr!important}
+  .proc-grid{grid-template-columns:1fr 1fr!important}
+  .footer-grid{grid-template-columns:1fr!important}
+}
+`);
+
+// CURSOR
+var dot=el('div',{class:'dot'}), ring=el('div',{class:'ring'});
+document.body.appendChild(dot); document.body.appendChild(ring);
+var mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',function(e){ mx=e.clientX; my=e.clientY; dot.style.left=mx+'px'; dot.style.top=my+'px'; });
+(function tick(){ rx+=(mx-rx)*.12; ry+=(my-ry)*.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(tick); })();
+document.addEventListener('mouseover',function(e){
+  var over=e.target.closest('button,a,.scard,.pcard');
+  ring.style.transform='translate(-50%,-50%) scale('+(over?'1.6':'1')+')';
+  ring.style.borderColor='rgba(212,160,23,'+(over?'.85':'.5')+')';
+});
+
+// CANVAS
+(function(){
+  var c=document.getElementById('bg'),ctx=c.getContext('2d'),W,H,pts=[];
+  function resize(){ W=c.width=innerWidth; H=c.height=innerHeight; }
+  resize(); window.addEventListener('resize',resize);
+  for(var i=0;i<80;i++) pts.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.4+.4,a:Math.random()*.45+.1});
+  (function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(function(p,i){
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(212,160,23,'+p.a+')'; ctx.fill();
+      for(var j=i+1;j<pts.length;j++){
+        var q=pts[j],dx=p.x-q.x,dy=p.y-q.y,d=Math.sqrt(dx*dx+dy*dy);
+        if(d<110){ ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.strokeStyle='rgba(212,160,23,'+(0.1*(1-d/110))+')'; ctx.lineWidth=.5; ctx.stroke(); }
+      }
+    });
+    requestAnimationFrame(draw);
+  })();
+})();
+
+var site=el('div',{class:'site'}); document.body.appendChild(site);
+
+// HELPERS
+function gradTxt(t){ var s=el('span',null,t); Object.assign(s.style,{background:T.grad,WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent'}); return s; }
+function secTag(t){ var d=el('div',null,t); Object.assign(d.style,{display:'inline-block',fontSize:'12px',fontWeight:'700',letterSpacing:'2px',textTransform:'uppercase',color:T.gold,background:'rgba(212,160,23,.1)',border:'1px solid rgba(212,160,23,.25)',padding:'5px 14px',borderRadius:'20px',marginBottom:'1rem'}); return d; }
+function secH2(txt, grad){ var h=el('h2'); h.style.cssText='font-family:"Bangers",cursive;font-size:clamp(2rem,4vw,3rem);letter-spacing:.5px;margin-bottom:1rem'; h.appendChild(document.createTextNode(txt)); if(grad) h.appendChild(gradTxt(grad)); return h; }
+function goldBtn(html, onClick, extra){
+  var b=el('button',{html:html,onclick:onClick});
+  Object.assign(b.style,Object.assign({padding:'13px 28px',borderRadius:T.r,border:'none',background:T.grad,color:T.black,fontFamily:"'Nunito',sans-serif",fontSize:'15px',fontWeight:'700',cursor:'pointer',transition:'all .2s',display:'inline-flex',alignItems:'center',gap:'8px'},extra||{}));
+  b.addEventListener('mouseenter',function(){this.style.transform='translateY(-2px)';this.style.boxShadow='0 10px 28px rgba(212,160,23,.35)';});
+  b.addEventListener('mouseleave',function(){this.style.transform='';this.style.boxShadow='';});
+  return b;
+}
+function ghostBtn(html, onClick){
+  var b=el('button',{html:html,onclick:onClick});
+  Object.assign(b.style,{padding:'13px 28px',borderRadius:T.r,border:'1.5px solid rgba(255,255,255,.22)',background:'transparent',color:T.white,fontFamily:"'Nunito',sans-serif",fontSize:'15px',fontWeight:'700',cursor:'pointer',transition:'all .2s'});
+  b.addEventListener('mouseenter',function(){this.style.borderColor='rgba(212,160,23,.6)';this.style.background='rgba(212,160,23,.08)';this.style.transform='translateY(-2px)';});
+  b.addEventListener('mouseleave',function(){this.style.borderColor='rgba(255,255,255,.22)';this.style.background='transparent';this.style.transform='';});
+  return b;
+}
+function card(extra){
+  var c=el('div');
+  Object.assign(c.style,Object.assign({background:T.dark2,border:'1px solid rgba(255,255,255,.07)',borderRadius:T.r2,padding:'2rem',transition:'all .3s'},extra||{}));
+  c.addEventListener('mouseenter',function(){this.style.borderColor='rgba(212,160,23,.35)';this.style.transform='translateY(-4px)';this.style.boxShadow='0 20px 40px rgba(0,0,0,.3)';});
+  c.addEventListener('mouseleave',function(){this.style.borderColor='rgba(255,255,255,.07)';this.style.transform='';this.style.boxShadow='';});
+  return c;
+}
+function inp(type,id,ph){
+  var i=type==='textarea'?document.createElement('textarea'):el('input',{type:type});
+  i.id=id; i.placeholder=ph;
+  Object.assign(i.style,{background:'rgba(255,255,255,.04)',border:'1px solid rgba(255,255,255,.1)',borderRadius:T.r,padding:'11px 14px',fontFamily:"'Nunito',sans-serif",fontSize:'14px',color:T.white,width:'100%',outline:'none',transition:'border-color .2s'});
+  if(type==='textarea'){i.style.height='100px';i.style.resize='vertical';i.style.lineHeight='1.5';}
+  i.addEventListener('focus',function(){this.style.borderColor='rgba(212,160,23,.5)';this.style.boxShadow='0 0 0 3px rgba(212,160,23,.1)';});
+  i.addEventListener('blur',function(){this.style.borderColor='rgba(255,255,255,.1)';this.style.boxShadow='';});
+  return i;
+}
+function lbl(t){ var l=el('label',null,t); Object.assign(l.style,{fontSize:'13px',fontWeight:'600',color:T.white2}); return l; }
+function fgroup(labelTxt, inputEl, mb){
+  var g=el('div',{style:{display:'flex',flexDirection:'column',gap:'5px',marginBottom:mb||'0'}});
+  g.appendChild(lbl(labelTxt)); g.appendChild(inputEl); return g;
+}
+
+// ============ NAV ============
+(function(){
+  var nav=el('nav');
+  Object.assign(nav.style,{position:'fixed',top:'0',left:'0',right:'0',zIndex:'100',padding:'0 5%',height:'70px',display:'flex',alignItems:'center',justifyContent:'space-between',transition:'all .3s',borderBottom:'1px solid transparent'});
+
+  var logo=el('div',{style:{display:'flex',alignItems:'center',gap:'10px',cursor:'pointer'}});
+  logo.appendChild(el('div',{style:{width:'38px',height:'38px',borderRadius:'9px',background:T.grad,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'18px',fontWeight:'900',color:T.black}},['E']));
+  var lt=el('span',null,'Empire Design'); Object.assign(lt.style,{background:T.grad,WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent',fontSize:'20px',fontWeight:'800',letterSpacing:'-.5px'});
+  logo.appendChild(lt); logo.onclick=function(){window.scrollTo({top:0,behavior:'smooth'});};
+  nav.appendChild(logo);
+
+  var links=[['#services','Services'],['#processus','Processus'],['#tarifs','Tarifs'],['#contact','Contact']];
+  var ul=el('ul',{class:'nav-links',style:{display:'flex',gap:'28px',alignItems:'center',listStyle:'none'}});
+  links.forEach(function(l){
+    var a=el('a',{href:l[0]},l[1]);
+    Object.assign(a.style,{fontSize:'14px',color:T.white2,fontWeight:'600',transition:'color .2s'});
+    a.addEventListener('mouseenter',function(){this.style.color=T.white;});
+    a.addEventListener('mouseleave',function(){this.style.color=T.white2;});
+    ul.appendChild(el('li',null,a));
+  });
+  nav.appendChild(ul);
+  nav.appendChild(goldBtn('💬 Démarrer un projet',function(){wa('Bonjour Empire Design ! Je souhaite démarrer un projet.');},{padding:'9px 18px',fontSize:'13px'}));
+
+  var ham=el('div',{class:'ham',style:{display:'none',flexDirection:'column',gap:'5px',cursor:'pointer',padding:'4px'}});
+  for(var i=0;i<3;i++){var sp=el('span');Object.assign(sp.style,{display:'block',width:'22px',height:'2px',background:T.white2,borderRadius:'2px'});ham.appendChild(sp);}
+  nav.appendChild(ham);
+  site.appendChild(nav);
+
+  var mob=el('div',{class:'mob',style:{display:'none',position:'fixed',top:'70px',left:'0',right:'0',background:'rgba(8,8,0,.97)',backdropFilter:'blur(20px)',padding:'1.5rem 5%',borderBottom:'1px solid rgba(212,160,23,.2)',zIndex:'99'}});
+  links.concat([['#','💬 WhatsApp']]).forEach(function(l,i){
+    var a=el('a',{href:l[0]},l[1]);
+    Object.assign(a.style,{display:'block',padding:'12px 0',fontSize:'15px',color:i===links.length?T.wa:T.white2,borderBottom:'1px solid rgba(255,255,255,.06)'});
+    if(i===links.length) a.onclick=function(e){e.preventDefault();wa('Bonjour Empire Design !');mob.classList.remove('open');mob.style.display='none';};
+    else a.addEventListener('click',function(){mob.classList.remove('open');mob.style.display='none';});
+    mob.appendChild(a);
+  });
+  site.appendChild(mob);
+  ham.onclick=function(){var o=mob.classList.toggle('open');mob.style.display=o?'block':'none';};
+
+  window.addEventListener('scroll',function(){
+    var s=window.scrollY>50;
+    nav.style.background=s?'rgba(8,8,0,.92)':'';
+    nav.style.backdropFilter=s?'blur(20px)':'';
+    nav.style.borderBottomColor=s?'rgba(212,160,23,.2)':'transparent';
+  });
+})();
+
+// ============ HERO ============
+(function(){
+  var sec=el('section',{style:{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',textAlign:'center',padding:'130px 5% 80px'}});
+  var wrap=el('div');
+
+  var badge=el('div');
+  badge.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:'+T.gold2+';display:inline-block;animation:blink 2s infinite;margin-right:8px;vertical-align:middle"></span>Agence digitale — Sangmélima, Cameroun';
+  Object.assign(badge.style,{display:'inline-flex',alignItems:'center',background:'rgba(212,160,23,.1)',border:'1px solid rgba(212,160,23,.3)',borderRadius:'30px',padding:'7px 16px',fontSize:'13px',color:T.gold2,marginBottom:'1.5rem',animation:'fadeUp .6s ease forwards'});
+
+  var h1=el('h1'); h1.style.cssText='font-family:"Bangers",cursive;font-size:clamp(3rem,7vw,5.5rem);letter-spacing:-1px;line-height:1.05;margin-bottom:1.5rem;animation:fadeUp .7s .1s ease both';
+  h1.appendChild(document.createTextNode('Nous construisons\n'));
+  var gs=el('span',null,"l'avenir digital"); Object.assign(gs.style,{display:'block',background:T.grad,WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent'});
+  h1.appendChild(gs);
+
+  var p=el('p',null,"Empire Design crée des expériences numériques exceptionnelles — sites web, applications, identité visuelle et bien plus. Votre vision, notre expertise.");
+  Object.assign(p.style,{fontSize:'clamp(1rem,2vw,1.2rem)',color:T.white2,maxWidth:'580px',margin:'0 auto 2.5rem',lineHeight:'1.7',animation:'fadeUp .7s .2s ease both'});
+
+  var btns=el('div',{style:{display:'flex',gap:'14px',justifyContent:'center',flexWrap:'wrap',animation:'fadeUp .7s .3s ease both'}});
+  btns.appendChild(goldBtn('💬 Discutons de votre projet',function(){wa("Bonjour Empire Design ! Je voudrais discuter d'un projet avec vous.");}));
+  btns.appendChild(ghostBtn('Nos services →',function(){document.getElementById('services').scrollIntoView({behavior:'smooth'});}));
+
+  [badge,h1,p,btns].forEach(function(c){wrap.appendChild(c);}); sec.appendChild(wrap); site.appendChild(sec);
+})();
+
+// ============ SERVICES ============
+(function(){
+  var sec=el('section',{id:'services'});
+  var hdr=el('div',{class:'reveal',style:{textAlign:'center',marginBottom:'3.5rem'}});
+  hdr.appendChild(secTag('Nos services'));
+  hdr.appendChild(secH2('Ce que nous créons ','pour vous'));
+  hdr.appendChild(el('p',{style:{fontSize:'16px',color:T.white2,maxWidth:'500px',margin:'0 auto'}},'Des solutions numériques sur mesure, conçues pour propulser votre activité'));
+  sec.appendChild(hdr);
+
+  var svs=[
+    {icon:'🌐',title:'Développement Web',desc:'Sites vitrine, e-commerce, plateformes web. Des interfaces modernes, rapides et responsive qui convertissent vos visiteurs en clients.',tag:'HTML · CSS · JavaScript',msg:"Bonjour ! Je suis intéressé par la création d'un site web. Pouvez-vous m'en dire plus ?"},
+    {icon:'🖥️',title:'Applications Mobiles',desc:'Applications Android et iOS performantes. Interface intuitive et expérience utilisateur optimisée pour fidéliser vos utilisateurs.',tag:'React Native · Flutter',msg:"Bonjour ! Je suis intéressé par le développement d'une application mobile. Pouvez-vous m'en dire plus ?"},
+    {icon:'🎨',title:'Identité Visuelle',desc:'Logo, charte graphique, brand book. Construisons ensemble une identité de marque forte et mémorable qui vous démarque.',tag:'Illustrator · Figma',msg:"Bonjour ! Je suis intéressé par la création d'une identité visuelle. Pouvez-vous m'en dire plus ?"},
+    {icon:'🖼️',title:'Design Print & Affiches',desc:'Flyers, affiches, bannières, cartes de visite. Des visuels percutants qui marquent les esprits et renforcent votre présence.',tag:'Photoshop · InDesign',msg:"Bonjour ! Je suis intéressé par la création d'affiches et supports print. Pouvez-vous m'en dire plus ?"},
+    {icon:'📊',title:'Marketing Digital',desc:'Stratégie de contenu, gestion des réseaux sociaux, SEO. Augmentez votre visibilité et atteignez votre audience cible.',tag:'SEO · Social Media',msg:"Bonjour ! Je suis intéressé par le marketing digital. Pouvez-vous m'en dire plus ?"},
+    {icon:'⚙️',title:'Logiciels sur Mesure',desc:'Systèmes de gestion, CRM, outils internes. Des solutions adaptées à vos processus métier pour optimiser votre productivité.',tag:'Node.js · Python · React',msg:"Bonjour ! Je suis intéressé par un logiciel sur mesure. Pouvez-vous m'en dire plus ?"}
+  ];
+
+  var grid=el('div',{class:'srv-grid reveal',style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:'20px'}});
+  svs.forEach(function(s,i){
+    var c=card({cursor:'pointer'});
+    c.className+=' scard';
+    if(i%3===1)c.classList.add('r1'); if(i%3===2)c.classList.add('r2');
+    c.onclick=function(){wa(s.msg);};
+    var ico=el('div',{html:s.icon});
+    Object.assign(ico.style,{width:'52px',height:'52px',borderRadius:T.r,background:'rgba(212,160,23,.12)',border:'1px solid rgba(212,160,23,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'24px',marginBottom:'1.2rem',transition:'all .3s'});
+    var t=el('h3',null,s.title); t.style.cssText='font-size:18px;font-weight:700;margin-bottom:10px';
+    var d=el('p',null,s.desc); d.style.cssText='font-size:14px;color:'+T.white2+';line-height:1.6';
+    var tg=el('span',null,s.tag); Object.assign(tg.style,{display:'inline-block',marginTop:'14px',fontSize:'12px',color:T.gold,background:'rgba(212,160,23,.1)',border:'1px solid rgba(212,160,23,.2)',padding:'3px 10px',borderRadius:'20px'});
+    [ico,t,d,tg].forEach(function(e){c.appendChild(e);});
+    c.addEventListener('mouseenter',function(){ico.style.background='rgba(212,160,23,.25)';ico.style.borderColor='rgba(212,160,23,.5)';});
+    c.addEventListener('mouseleave',function(){ico.style.background='rgba(212,160,23,.12)';ico.style.borderColor='rgba(212,160,23,.2)';});
+    grid.appendChild(c);
+  });
+  sec.appendChild(grid); site.appendChild(sec);
+})();
+
+// ============ PROCESSUS ============
+(function(){
+  var sec=el('section',{id:'processus',style:{background:T.dark}});
+  var hdr=el('div',{class:'reveal',style:{textAlign:'center',marginBottom:'3.5rem'}});
+  hdr.appendChild(secTag('Notre méthode'));
+  hdr.appendChild(secH2('Comment nous ','travaillons'));
+  hdr.appendChild(el('p',{style:{fontSize:'16px',color:T.white2,maxWidth:'500px',margin:'0 auto'}},'Un processus clair et collaboratif pour garantir le succès de votre projet'));
+  sec.appendChild(hdr);
+
+  var steps=[{n:'01',t:'Découverte',d:'Nous analysons vos besoins, votre marché et vos objectifs pour définir la meilleure stratégie'},
+    {n:'02',t:'Conception',d:'Maquettes, wireframes et prototypes. Vous validez chaque étape avant le développement'},
+    {n:'03',t:'Développement',d:'Code propre, optimisé et maintenable. Développement agile avec mises à jour régulières'},
+    {n:'04',t:'Livraison',d:'Tests rigoureux, lancement et formation. Nous assurons le suivi post-livraison'}];
+
+  var grid=el('div',{class:'proc-grid',style:{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'0',position:'relative'}});
+  var line=el('div'); Object.assign(line.style,{position:'absolute',top:'35px',left:'12%',right:'12%',height:'1px',background:'linear-gradient(90deg,transparent,rgba(212,160,23,.4),transparent)',zIndex:'0'});
+  grid.appendChild(line);
+
+  steps.forEach(function(s,i){
+    var step=el('div',{class:'reveal r'+i,style:{textAlign:'center',padding:'2rem 1.5rem',position:'relative',zIndex:'1'}});
+    var num=el('div',null,s.n);
+    Object.assign(num.style,{width:'70px',height:'70px',borderRadius:'50%',background:T.dark2,border:'2px solid rgba(212,160,23,.3)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'"Bangers",cursive',fontSize:'22px',color:T.gold,margin:'0 auto 1.2rem',transition:'all .3s'});
+    step.appendChild(num);
+    step.appendChild(el('h3',{style:{fontSize:'16px',fontWeight:'700',marginBottom:'8px'}},s.t));
+    step.appendChild(el('p',{style:{fontSize:'13px',color:T.white3,lineHeight:'1.5'}},s.d));
+    step.addEventListener('mouseenter',function(){num.style.background='rgba(212,160,23,.15)';num.style.borderColor=T.gold;num.style.boxShadow='0 0 28px rgba(212,160,23,.2)';});
+    step.addEventListener('mouseleave',function(){num.style.background=T.dark2;num.style.borderColor='rgba(212,160,23,.3)';num.style.boxShadow='';});
+    grid.appendChild(step);
+  });
+  sec.appendChild(grid); site.appendChild(sec);
+})();
+
+// ============ TARIFS ============
+(function(){
+  var sec=el('section',{id:'tarifs'});
+  var hdr=el('div',{class:'reveal',style:{textAlign:'center',marginBottom:'3.5rem'}});
+  hdr.appendChild(secTag('Tarifs'));
+  hdr.appendChild(secH2('Des offres ','adaptées à vos besoins'));
+  hdr.appendChild(el('p',{style:{fontSize:'16px',color:T.white2,maxWidth:'500px',margin:'0 auto'}},'Contactez-nous pour un devis personnalisé selon votre projet'));
+  sec.appendChild(hdr);
+
+  var plans=[
+    {name:'Starter',desc:'Pour les petites structures et startups',yes:['Site vitrine (5 pages)','Design responsive','Logo simple','Formulaire de contact','1 mois de support'],no:['E-commerce','Application mobile'],msg:"Bonjour ! Je suis intéressé par l'offre Starter. Pouvez-vous me faire un devis ?",featured:false},
+    {name:'Business',desc:'Pour les entreprises en croissance',yes:['Site web complet','Design premium','Logo + charte graphique','E-commerce intégré','SEO de base','3 mois de support'],no:['Application mobile'],msg:"Bonjour ! Je suis intéressé par l'offre Business. Pouvez-vous me faire un devis ?",featured:true},
+    {name:'Premium',desc:'Solution digitale complète',yes:['Site web + App mobile','Design UI/UX premium','Identité visuelle complète','E-commerce avancé','SEO + Marketing digital','Logiciel sur mesure','Support illimité 1 an'],no:[],msg:"Bonjour ! Je suis intéressé par l'offre Premium. Pouvez-vous me faire un devis ?",featured:false}
+  ];
+
+  var grid=el('div',{class:'price-grid reveal',style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(260px,1fr))',gap:'20px',maxWidth:'960px',margin:'0 auto'}});
+  plans.forEach(function(p,i){
+    var c=el('div',{class:'reveal r'+i});
+    Object.assign(c.style,{background:p.featured?'linear-gradient(135deg,rgba(212,160,23,.08),rgba(184,134,11,.05))':T.dark2,border:'1px solid '+(p.featured?'rgba(212,160,23,.5)':'rgba(255,255,255,.07)'),borderRadius:T.r2,padding:'2rem',position:'relative',transition:'all .3s'});
+    c.addEventListener('mouseenter',function(){this.style.transform='translateY(-4px)';this.style.boxShadow='0 20px 40px rgba(0,0,0,.3)';});
+    c.addEventListener('mouseleave',function(){this.style.transform='';this.style.boxShadow='';});
+    if(p.featured){var b=el('div',null,'POPULAIRE');Object.assign(b.style,{position:'absolute',top:'-12px',left:'50%',transform:'translateX(-50%)',background:T.grad,color:T.black,fontSize:'11px',fontWeight:'800',letterSpacing:'2px',padding:'4px 16px',borderRadius:'20px'});c.appendChild(b);}
+    c.appendChild(el('div',{style:{fontSize:'14px',fontWeight:'700',textTransform:'uppercase',letterSpacing:'1px',color:T.white2,marginBottom:'.5rem'}},p.name));
+    var pr=el('div',null,'Sur devis'); Object.assign(pr.style,{fontFamily:'"Bangers",cursive',fontSize:'2.4rem',color:T.gold,letterSpacing:'-1px',lineHeight:'1'}); c.appendChild(pr);
+    c.appendChild(el('p',{style:{fontSize:'13px',color:T.white3,margin:'8px 0 1.5rem'}},p.desc));
+    var ul=el('ul',{style:{listStyle:'none',marginBottom:'1.5rem'}});
+    p.yes.forEach(function(f){
+      var li=el('li',{style:{display:'flex',alignItems:'center',gap:'9px',fontSize:'14px',padding:'8px 0',borderBottom:'1px solid rgba(255,255,255,.05)',color:T.white2}});
+      var ck=el('span',null,'✓'); Object.assign(ck.style,{width:'18px',height:'18px',borderRadius:'50%',background:'rgba(16,185,129,.15)',color:T.green,fontSize:'11px',fontWeight:'800',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:'0'});
+      li.appendChild(ck); li.appendChild(document.createTextNode(f)); ul.appendChild(li);
+    });
+    p.no.forEach(function(f){
+      var li=el('li',{style:{display:'flex',alignItems:'center',gap:'9px',fontSize:'14px',padding:'8px 0',borderBottom:'1px solid rgba(255,255,255,.05)',color:T.white2,opacity:'.4'}});
+      var xk=el('span',null,'✗'); Object.assign(xk.style,{width:'18px',height:'18px',borderRadius:'50%',background:'rgba(239,68,68,.1)',color:T.red,fontSize:'11px',fontWeight:'800',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:'0'});
+      li.appendChild(xk); li.appendChild(document.createTextNode(f)); ul.appendChild(li);
+    });
+    c.appendChild(ul);
+    var pb=el('button',null,'Demander un devis');
+    Object.assign(pb.style,{width:'100%',padding:'12px',borderRadius:T.r,cursor:'pointer',border:'1.5px solid rgba(212,160,23,.4)',background:p.featured?T.grad:'transparent',color:p.featured?T.black:T.white,fontFamily:"'Nunito',sans-serif",fontSize:'14px',fontWeight:'600',transition:'all .2s'});
+    pb.addEventListener('mouseenter',function(){this.style.background=T.grad;this.style.borderColor='transparent';this.style.color=T.black;});
+    if(!p.featured) pb.addEventListener('mouseleave',function(){this.style.background='transparent';this.style.borderColor='rgba(212,160,23,.4)';this.style.color=T.white;});
+    pb.onclick=function(){wa(p.msg);}; c.appendChild(pb); grid.appendChild(c);
+  });
+  sec.appendChild(grid); site.appendChild(sec);
+})();
+
+// ============ CONTACT ============
+(function(){
+  var sec=el('section',{id:'contact',style:{background:T.dark}});
+  var wrap=el('div',{class:'contact-grid',style:{maxWidth:'1000px',margin:'0 auto',display:'grid',gridTemplateColumns:'1fr 1fr',gap:'60px',alignItems:'center'}});
+
+  // LEFT
+  var left=el('div',{class:'reveal'});
+  left.appendChild(secTag('Contact'));
+  left.appendChild(secH2('Parlons de votre ','projet'));
+  left.appendChild(el('p',{style:{fontSize:'15px',color:T.white2,lineHeight:'1.7',marginBottom:'2rem'}},"Vous avez une idée, un projet ou une question ? Notre équipe est disponible pour vous accompagner. Contactez-nous dès maintenant !"));
+
+  var infos=[{i:'📍',l:'Notre adresse',v:'Sangmélima, Cameroun'},{i:'📞',l:'Téléphone / WhatsApp',v:'+237 694 786 774'},{i:'🕐',l:'Disponibilité',v:'Lun – Sam, 8h00 – 20h00'}];
+  var ibox=el('div',{style:{display:'flex',flexDirection:'column',gap:'16px',marginBottom:'2rem'}});
+  infos.forEach(function(info){
+    var row=el('div',{style:{display:'flex',alignItems:'center',gap:'14px'}});
+    row.appendChild(el('div',{html:info.i,style:{width:'42px',height:'42px',borderRadius:T.r,background:'rgba(212,160,23,.1)',border:'1px solid rgba(212,160,23,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'20px',flexShrink:'0'}}));
+    var t=el('div'); t.appendChild(el('div',{style:{fontSize:'13px',color:T.white2}},info.l)); t.appendChild(el('div',{style:{fontSize:'15px',fontWeight:'600'}},info.v));
+    row.appendChild(t); ibox.appendChild(row);
+  });
+  left.appendChild(ibox);
+
+  var wb=el('button');
+  wb.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Écrire sur WhatsApp';
+  Object.assign(wb.style,{display:'inline-flex',alignItems:'center',gap:'10px',padding:'14px 28px',borderRadius:T.r,background:T.wa,color:T.white,fontSize:'15px',fontWeight:'700',cursor:'pointer',border:'none',fontFamily:"'Nunito',sans-serif",transition:'all .2s',boxShadow:'0 4px 20px rgba(37,211,102,.25)'});
+  wb.addEventListener('mouseenter',function(){this.style.background='#1ebe57';this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 30px rgba(37,211,102,.35)';});
+  wb.addEventListener('mouseleave',function(){this.style.background=T.wa;this.style.transform='';this.style.boxShadow='0 4px 20px rgba(37,211,102,.25)';});
+  wb.onclick=function(){wa("Bonjour Empire Design ! Je souhaite discuter d'un projet. Pouvez-vous m'en dire plus sur vos services ?");};
+  left.appendChild(wb);
+
+  // RIGHT FORM
+  var right=el('div',{class:'reveal r1',style:{background:T.dark3,border:'1px solid rgba(255,255,255,.07)',borderRadius:T.r2,padding:'2rem'}});
+  right.appendChild(el('h3',{style:{fontSize:'18px',fontWeight:'700',marginBottom:'1.2rem'}},'Envoyez-nous un message'));
+
+  var fi=el('div',{id:'fi'});
+  var row1=el('div',{class:'form-row',style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'14px',marginBottom:'14px'}});
+  row1.appendChild(fgroup('Votre nom',inp('text','fn','Jean Dupont')));
+  row1.appendChild(fgroup('Téléphone / WhatsApp',inp('tel','fp','+237 6XX XXX XXX')));
+  fi.appendChild(row1);
+
+  var selEl=document.createElement('select'); selEl.id='fs';
+  Object.assign(selEl.style,{background:T.dark3,border:'1px solid rgba(255,255,255,.1)',borderRadius:T.r,padding:'11px 14px',fontFamily:"'Nunito',sans-serif",fontSize:'14px',color:T.white,width:'100%',outline:'none'});
+  [['','— Choisissez un service —'],['web','Développement Web'],['app','Application Mobile'],['logo','Logo & Identité Visuelle'],['print','Affiches & Design Print'],['mkt','Marketing Digital'],['soft','Logiciel sur Mesure'],['pack','Pack Complet']].forEach(function(o){var op=el('option',{value:o[0]},o[1]);op.style.background=T.dark3;selEl.appendChild(op);});
+  selEl.addEventListener('focus',function(){this.style.borderColor='rgba(212,160,23,.5)';});
+  selEl.addEventListener('blur',function(){this.style.borderColor='rgba(255,255,255,.1)';});
+  fi.appendChild(fgroup('Service souhaité',selEl,'14px'));
+  fi.appendChild(fgroup('Décrivez votre projet',inp('textarea','fm','Dites-nous en plus sur votre projet, vos besoins, votre budget estimé...'),'14px'));
+
+  var sb=el('button',null,'📤 Envoyer via WhatsApp');
+  Object.assign(sb.style,{width:'100%',padding:'13px',borderRadius:T.r,background:T.grad,color:T.black,fontFamily:"'Nunito',sans-serif",fontSize:'15px',fontWeight:'700',cursor:'pointer',border:'none',transition:'all .2s',marginTop:'4px'});
+  sb.addEventListener('mouseenter',function(){this.style.opacity='.9';this.style.transform='translateY(-1px)';});
+  sb.addEventListener('mouseleave',function(){this.style.opacity='1';this.style.transform='';});
+  sb.onclick=function(){
+    var name=document.getElementById('fn').value.trim();
+    if(!name){alert('Veuillez saisir votre nom.');return;}
+    var txt='Bonjour Empire Design ! 👋\n\n*Nom :* '+name+'\n';
+    var ph=document.getElementById('fp').value.trim(); if(ph) txt+='*Contact :* '+ph+'\n';
+    var sv=document.getElementById('fs').value; if(sv) txt+='*Service :* '+sv+'\n';
+    var mg=document.getElementById('fm').value.trim(); if(mg) txt+='*Message :* '+mg+'\n';
+    txt+='\nJ\'attends votre retour. Merci !';
+    fi.style.display='none';
+    var ok=el('div',{style:{textAlign:'center',padding:'2rem'}});
+    ok.appendChild(el('div',{style:{fontSize:'48px',marginBottom:'1rem',display:'block',animation:'bounce 1s ease infinite alternate'}},['✅']));
+    ok.appendChild(el('h3',{style:{fontSize:'20px',fontWeight:'700',marginBottom:'8px'}},['Message envoyé !']));
+    ok.appendChild(el('p',{style:{color:T.white2,fontSize:'14px',marginBottom:'1.5rem'}},["WhatsApp va s'ouvrir. Notre équipe vous répondra rapidement."]));
+    var rb=goldBtn('Nouveau message',function(){ok.remove();fi.style.display='';document.getElementById('fn').value='';document.getElementById('fp').value='';document.getElementById('fs').value='';document.getElementById('fm').value='';},{display:'inline-flex',margin:'0 auto'});
+    ok.appendChild(rb); right.appendChild(ok);
+    setTimeout(function(){wa(txt);},600);
+  };
+  fi.appendChild(sb); right.appendChild(fi);
+
+  wrap.appendChild(left); wrap.appendChild(right); sec.appendChild(wrap); site.appendChild(sec);
+})();
+
+// ============ FOOTER ============
+(function(){
+  var footer=el('footer',{style:{background:T.dark,borderTop:'1px solid rgba(255,255,255,.06)',padding:'60px 5% 30px'}});
+  var grid=el('div',{class:'footer-grid',style:{display:'grid',gridTemplateColumns:'2fr 1fr 1fr 1fr',gap:'40px',marginBottom:'3rem'}});
+
+  var brand=el('div',{style:{maxWidth:'300px'}});
+  var lr=el('div',{style:{display:'flex',alignItems:'center',gap:'10px',marginBottom:'1rem'}});
+  lr.appendChild(el('div',{style:{width:'36px',height:'36px',borderRadius:'8px',background:T.grad,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'16px',fontWeight:'900',color:T.black}},['E']));
+  var lt=el('span',null,'Empire Design'); Object.assign(lt.style,{background:T.grad,WebkitBackgroundClip:'text',backgroundClip:'text',color:'transparent',fontSize:'20px',fontWeight:'700'});
+  lr.appendChild(lt); brand.appendChild(lr);
+  brand.appendChild(el('p',{style:{fontSize:'14px',color:T.white3,lineHeight:'1.7',marginBottom:'1.5rem'}},'Votre partenaire digital à Sangmélima. Nous transformons vos idées en expériences numériques mémorables.'));
+  var soc=el('div',{style:{display:'flex',gap:'10px'}});
+  ['💬','📘','📸','🐦'].forEach(function(s,i){
+    var b=el('button',{html:s});
+    Object.assign(b.style,{width:'36px',height:'36px',borderRadius:T.r,background:'rgba(255,255,255,.05)',border:'1px solid rgba(255,255,255,.1)',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'18px',transition:'all .2s'});
+    b.addEventListener('mouseenter',function(){this.style.background='rgba(212,160,23,.2)';this.style.borderColor='rgba(212,160,23,.4)';this.style.transform='translateY(-2px)';});
+    b.addEventListener('mouseleave',function(){this.style.background='rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.1)';this.style.transform='';});
+    if(i===0) b.onclick=function(){wa('Bonjour Empire Design !');};
+    soc.appendChild(b);
+  });
+  brand.appendChild(soc); grid.appendChild(brand);
+
+  [{h:'Services',ls:[['Développement Web',"Bonjour, je suis intéressé par le développement web."],['App Mobile',"Bonjour, je suis intéressé par une application mobile."],['Identité Visuelle',"Bonjour, je suis intéressé par l'identité visuelle."],['Design Print',"Bonjour, je suis intéressé par le design print."],['Marketing Digital',"Bonjour, je suis intéressé par le marketing digital."]]},
+   {h:'Entreprise',ls:[['Notre méthode','#processus'],['Tarifs','#tarifs'],['Contact','#contact']]},
+   {h:'Contact',ls:[['+237 694 786 774','tel'],[' WhatsApp','wa'],['Sangmélima, Cameroun','#contact']]}
+  ].forEach(function(col){
+    var c=el('div');
+    var h=el('h4',null,col.h); h.style.cssText='font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:'+T.white2+';margin-bottom:1rem'; c.appendChild(h);
+    var ul=el('ul',{style:{listStyle:'none'}});
+    col.ls.forEach(function(lnk){
+      var li=el('li',{style:{marginBottom:'9px'}});
+      var a=el('a',null,lnk[0]); a.style.cssText='font-size:14px;color:'+T.white3+';transition:color .2s;cursor:pointer';
+      a.addEventListener('mouseenter',function(){this.style.color=T.white;}); a.addEventListener('mouseleave',function(){this.style.color=T.white3;});
+      if(lnk[1]==='wa') a.onclick=function(){wa('Bonjour Empire Design !');};
+      else if(lnk[1]==='tel') a.href='tel:+237694786774';
+      else if(lnk[1].startsWith('#')) a.href=lnk[1];
+      else a.onclick=function(){wa(lnk[1]);};
+      li.appendChild(a); ul.appendChild(li);
+    });
+    c.appendChild(ul); grid.appendChild(c);
+  });
+  footer.appendChild(grid);
+
+  var bot=el('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',paddingTop:'1.5rem',borderTop:'1px solid rgba(255,255,255,.06)',flexWrap:'wrap',gap:'10px'}});
+  bot.appendChild(el('div',{style:{fontSize:'13px',color:T.white3}},'© 2025 Empire Design. Tous droits réservés. Made with ❤️ à Sangmélima.'));
+  var wf=el('button'); wf.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> +237 694 786 774';
+  Object.assign(wf.style,{display:'inline-flex',alignItems:'center',gap:'8px',fontSize:'13px',color:T.green,background:'rgba(37,211,102,.1)',border:'1px solid rgba(37,211,102,.2)',padding:'6px 14px',borderRadius:'20px',cursor:'pointer',transition:'all .2s',fontFamily:"'Nunito',sans-serif"});
+  wf.addEventListener('mouseenter',function(){this.style.background='rgba(37,211,102,.2)';});
+  wf.addEventListener('mouseleave',function(){this.style.background='rgba(37,211,102,.1)';});
+  wf.onclick=function(){wa('Bonjour Empire Design ! Je souhaite en savoir plus sur vos services.');};
+  bot.appendChild(wf); footer.appendChild(bot); site.appendChild(footer);
+})();
+
+// WA FLOAT
+(function(){
+  var w=el('div',{style:{position:'fixed',bottom:'28px',right:'28px',zIndex:'500'}});
+  var tt=el('div',null,'Écrivez-nous sur WhatsApp'); Object.assign(tt.style,{position:'absolute',right:'70px',top:'50%',transform:'translateY(-50%)',background:'rgba(8,8,0,.9)',backdropFilter:'blur(10px)',border:'1px solid rgba(255,255,255,.1)',borderRadius:T.r,padding:'8px 14px',fontSize:'13px',fontWeight:'600',whiteSpace:'nowrap',color:T.white,opacity:'0',pointerEvents:'none',transition:'opacity .2s'});
+  var pulse=el('div'); Object.assign(pulse.style,{position:'absolute',inset:'-4px',borderRadius:'50%',border:'2px solid rgba(37,211,102,.4)',animation:'waRing 2s infinite'});
+  var fab=el('button'); fab.innerHTML='<svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>';
+  Object.assign(fab.style,{width:'56px',height:'56px',borderRadius:'50%',background:T.wa,border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 4px 20px rgba(37,211,102,.4)',transition:'all .2s',position:'relative'});
+  fab.appendChild(pulse);
+  fab.addEventListener('mouseenter',function(){this.style.transform='scale(1.1)';this.style.boxShadow='0 8px 30px rgba(37,211,102,.5)';tt.style.opacity='1';});
+  fab.addEventListener('mouseleave',function(){this.style.transform='';this.style.boxShadow='0 4px 20px rgba(37,211,102,.4)';tt.style.opacity='0';});
+  fab.onclick=function(){wa("Bonjour Empire Design ! Je suis intéressé par vos services, puis-je en savoir plus ?");};
+  w.appendChild(tt); w.appendChild(fab); document.body.appendChild(w);
+})();
+
+// SCROLL TO TOP
+(function(){
+  var b=el('button',{html:'↑'});
+  Object.assign(b.style,{position:'fixed',bottom:'28px',left:'28px',zIndex:'500',width:'44px',height:'44px',borderRadius:T.r,background:'rgba(212,160,23,.15)',border:'1px solid rgba(212,160,23,.3)',color:T.white,fontSize:'20px',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',transition:'all .2s',opacity:'0',pointerEvents:'none',fontFamily:"'Nunito',sans-serif"});
+  b.addEventListener('mouseenter',function(){this.style.background='rgba(212,160,23,.3)';this.style.transform='translateY(-2px)';});
+  b.addEventListener('mouseleave',function(){this.style.background='rgba(212,160,23,.15)';this.style.transform='';});
+  b.onclick=function(){window.scrollTo({top:0,behavior:'smooth'});};
+  window.addEventListener('scroll',function(){var v=window.scrollY>400;b.style.opacity=v?'1':'0';b.style.pointerEvents=v?'all':'none';});
+  document.body.appendChild(b);
+})();
+
+// SCROLL REVEAL
+(function(){
+  var obs=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting)x.target.classList.add('vis');});},{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+  setTimeout(function(){document.querySelectorAll('.reveal').forEach(function(e){obs.observe(e);});},150);
+})();
+</script>
+</body>
+</html>
